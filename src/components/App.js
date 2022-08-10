@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-// import styled from 'styled-components';
 import { nanoid } from 'nanoid';
 import ContactForm from "./Form/Form";
 import ContactList from "./ContactList/ContactList";
@@ -7,16 +6,28 @@ import Filter from "./Filter/Filter";
 
 export class App extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [],
     filter: '',
   }
 
-addContact = ({name, number}) => {
+  componentDidMount() {
+    const contactsLoc = localStorage.getItem('contactsLoc');
+    const parsContacts = JSON.parse(contactsLoc);
+    if (parsContacts) {
+      this.setState({ contacts: parsContacts });
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    console.log('App componentDidUpdate');
+    const nextContacts = this.state.contacts;
+    const prevContacts = prevState.contacts;
+
+    if (nextContacts !== prevContacts) {
+      localStorage.setItem('contactsLoc', JSON.stringify(nextContacts));
+    }
+  }
+
+  addContact = ({name, number}) => {
     const contact = {
       id: nanoid(5),
       name,
@@ -49,7 +60,7 @@ console.log('e', e)
     }));
   };
 
-
+  
   render() {
     const { filter } = this.state;
     const { addContact, filterOnChange, deleteContact} = this;
@@ -67,6 +78,5 @@ console.log('e', e)
     )
   }
 }
-
 
 export default App;
